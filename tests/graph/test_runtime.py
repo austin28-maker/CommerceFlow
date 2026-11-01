@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 import pytest
 
 from app.graph import runtime
@@ -9,7 +5,7 @@ from app.graph import runtime
 
 @pytest.fixture()
 def no_summary_task(monkeypatch):
-    """屏蔽 ch07 轮后摘要触发(会读真库);触发逻辑本身在 test_summarizer.py 测。"""
+    """屏蔽 上下文模块 轮后摘要触发(会读真库);触发逻辑本身在 test_summarizer.py 测。"""
     async def noop(cid):
         return None
     monkeypatch.setattr(runtime.summarizer, "maybe_schedule_summary", noop)
@@ -25,8 +21,8 @@ def test_graph_input_resets_per_turn_output_channels():
     assert inp["citations"] == []
     assert inp["steps"] == 0 and inp["tokens_used"] == 0
     assert [m.content for m in inp["messages"]] == ["hi"]  # 本轮新消息(reducer 追加进历史)
-    assert inp["messages"][0].id == "db-1"                 # ch07:用户消息带 DB 锚点
-    assert inp["summary"] == "" and inp["summary_upto_msg_id"] == 0  # ch07:摘要两字段每轮刷新
+    assert inp["messages"][0].id == "db-1"                 # 上下文模块:用户消息带 DB 锚点
+    assert inp["summary"] == "" and inp["summary_upto_msg_id"] == 0  # 上下文模块:摘要两字段每轮刷新
     assert inp["resolved_query"] == "" and inp["intent_confidence"] == 0.0
     assert inp["order_id"] == "" and inp["order_data"] == {}
     # trace 是 merge-reducer 通道,塞 {} 会被合并(merge(旧,{})=旧)清不掉;

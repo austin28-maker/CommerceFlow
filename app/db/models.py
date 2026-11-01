@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 from datetime import datetime
 
 from sqlalchemy import BigInteger, DateTime, Enum, ForeignKey, Integer, JSON, String, Text, func
@@ -18,7 +14,7 @@ class Conversation(Base):
     status: Mapped[str] = mapped_column(
         Enum("进行中", "已转人工", "已结束"), server_default="进行中"
     )
-    summary: Mapped[str | None] = mapped_column(Text, nullable=True)               # ch07 早期轮次滚动摘要
+    summary: Mapped[str | None] = mapped_column(Text, nullable=True)               # 上下文模块 早期轮次滚动摘要
     summary_upto_msg_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)  # 摘要覆盖到的消息 id
     layer1_from_msg_id: Mapped[int | None] = mapped_column(BigInteger, nullable=True)  # 层1(原文)起点,此 id 之前渲染成半压形态
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
@@ -147,16 +143,16 @@ class LowConfidenceQuestion(Base):
     raw_question: Mapped[str] = mapped_column(Text)
     source: Mapped[str] = mapped_column(Enum("retrieval_low_conf", "self_check", "user_feedback"))
     reason: Mapped[str | None] = mapped_column(Text, nullable=True)
-    # ch09 落池时召回快照。none_as_null=True:Python None 存 SQL NULL 而非 JSON null
+    # 可观测模块 落池时召回快照。none_as_null=True:Python None 存 SQL NULL 而非 JSON null
     # (默认 False 会把 None 写成 JSON 'null',IS NOT NULL 判真、语义全乱,实测踩坑)
     retrieved_chunks: Mapped[list | None] = mapped_column(JSON(none_as_null=True), nullable=True)
     matched_review_id: Mapped[int | None] = mapped_column(
-        BigInteger, ForeignKey("review_queue.id"), nullable=True)               # ch09 查重归并落点
+        BigInteger, ForeignKey("review_queue.id"), nullable=True)               # 可观测模块 查重归并落点
     created_at: Mapped[datetime] = mapped_column(DateTime, server_default=func.now())
 
 
 class ReviewQueue(Base):
-    """ch09 飞轮待审队列:一行 = 一个去重后的知识缺口;查重命中累加 occurrence_count 不新建行。"""
+    """可观测模块 飞轮待审队列:一行 = 一个去重后的知识缺口;查重命中累加 occurrence_count 不新建行。"""
     __tablename__ = "review_queue"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
@@ -172,7 +168,7 @@ class ReviewQueue(Base):
 
 
 class EvalRun(Base):
-    """ch09 自动化评估流水线:一行 = 一轮评估;metrics JSON 收各指标,按时间连成趋势。"""
+    """可观测模块 自动化评估流水线:一行 = 一轮评估;metrics JSON 收各指标,按时间连成趋势。"""
     __tablename__ = "eval_runs"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)
@@ -183,7 +179,7 @@ class EvalRun(Base):
 
 
 class FaithCase(Base):
-    """ch04 编造个案台账:一题一行,跨轮累计。
+    """检索评测模块 编造个案台账:一题一行,跨轮累计。
 
     报告每跑一次就被覆盖,个案和它的处置状态得有地方长期待着。同一题再次被判编造只更新
     这一行(seen_count+1);已解决的题重新被判出来会退回「未解决」——那是复发。
@@ -211,7 +207,7 @@ class FaithCase(Base):
 
 
 class TopicClassification(Base):
-    """ch10 主题分类结果:旁路批量归类,一行 = 一条问题的一次归类;labels 存命中类目名数组。"""
+    """分类器模块 主题分类结果:旁路批量归类,一行 = 一条问题的一次归类;labels 存命中类目名数组。"""
     __tablename__ = "topic_classifications"
 
     id: Mapped[int] = mapped_column(BigInteger, primary_key=True, autoincrement=True)

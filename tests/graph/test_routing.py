@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 import pytest
 from langchain_core.messages import AIMessage
 
@@ -60,7 +56,7 @@ def test_should_continue_stops_on_step_cap():
 
 
 def test_token_花销不再当停止条件():
-    # 环里只按步数封顶。token 记账继续走(进 trace、给 ch09 统计),但不参与判断:
+    # 环里只按步数封顶。token 记账继续走(进 trace、给 可观测模块 统计),但不参与判断:
     # 混在这里卡,阈值估偏一次就把整条工具链掐断,而且掐在模型已经决定调工具之后
     ai = AIMessage("", tool_calls=[{"name": "query_order", "args": {}, "id": "1"}])
     state = {"messages": [ai], "steps": 1, "tokens_used": 10_000_000}

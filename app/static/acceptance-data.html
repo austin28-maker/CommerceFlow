@@ -1,15 +1,11 @@
 <!doctype html>
 <!--
-  来源：公众号@小林coding
-  后端八股网站：xiaolincoding.com
-  Agent网站：xiaolinnote.com
-  简历模版：jianli.xiaolinnote.com
 -->
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>喵喵优选 · 分类器数据产物</title>
+  <title>CommerceFlow · 分类器数据产物</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'><rect x='2' y='2' width='4' height='4' fill='%232b2632'/><rect x='10' y='2' width='4' height='4' fill='%232b2632'/><rect x='2' y='4' width='12' height='9' fill='%232b2632'/><rect x='3' y='3' width='2' height='3' fill='%23ff9f57'/><rect x='11' y='3' width='2' height='3' fill='%23ff9f57'/><rect x='3' y='5' width='10' height='7' fill='%23ff9f57'/><rect x='5' y='7' width='1' height='2' fill='%232b2632'/><rect x='10' y='7' width='1' height='2' fill='%232b2632'/><rect x='7' y='9' width='2' height='1' fill='%23ff8095'/></svg>" />
   <link rel="stylesheet" href="/static/acceptance.css" />
   <style>
@@ -125,7 +121,7 @@
       exams.appendChild(el("div", "stage", "分层切卷 80/10/10"));
       exams.appendChild(el("b", "", SPLIT_KEYS.map((k) => sp[k].size).join(" / ")));
       exams.appendChild(el("div", "desc", "训练 / 验证 / 测试；训练集另做增强与定向补数"));
-      exams.appendChild(el("div", "f", "data/ch10/dataset/*.jsonl"));
+      exams.appendChild(el("div", "f", "data/classifier/dataset/*.jsonl"));
       flow.appendChild(exams);
       pFlow.appendChild(flow);
       pFlow.appendChild(fileTable([...d.lineage, d.sample_review]));
@@ -133,7 +129,7 @@
         "人工抽审文件 sample_review.md 是给人读的那一份（真实池全量 + 每类模拟抽 5），"
         + "看到错标就直接改语料，不许改考卷去凑分。"));
       pFlow.appendChild(jobRow(
-        ["ch10-corpus", "ch10-dataset"].map((n) => jobSpecs[n]).filter(Boolean), load));
+        ["classifier-corpus", "classifier-dataset"].map((n) => jobSpecs[n]).filter(Boolean), load));
       body.appendChild(pFlow);
 
       /* ② 三份考卷 + 泄漏自检 */
@@ -202,7 +198,7 @@
         + "；写入于 " + fmtTime(d.model.threshold_file.mtime)
         + "，" + fmtBytes(d.model.threshold_file.bytes) + "。"));
       pModel.appendChild(thr);
-      pModel.appendChild(jobRow([jobSpecs["ch10-train"]].filter(Boolean), load,
+      pModel.appendChild(jobRow([jobSpecs["classifier-train"]].filter(Boolean), load,
         "训练是分钟级重活，会覆盖现有权重"));
       body.appendChild(pModel);
 
@@ -221,7 +217,7 @@
         pOnnx.appendChild(missingBox(ex.hint));
       }
       pOnnx.appendChild(jobRow(
-        ["ch10-export", "classifier-up", "classifier-down"].map((n) => jobSpecs[n]).filter(Boolean),
+        ["classifier-export", "classifier-up", "classifier-down"].map((n) => jobSpecs[n]).filter(Boolean),
         load));
       body.appendChild(pOnnx);
     }

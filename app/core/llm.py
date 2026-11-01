@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 import logging
 
 from langchain_core.exceptions import OutputParserException
@@ -34,8 +30,8 @@ class _CumulativeUsageChatOpenAI(ChatOpenAI):
 
     有些 OpenAI 兼容通道在**每个** chunk 上都重报一遍**累计**用量,而 langchain-openai
     把各 chunk 的用量**相加**。两件事凑到一起,一次调用的 token 数会被放大到 chunk 条数倍
-    ——实测 24 个 chunk、input 恒为 11,聚合出来是 264。ch09 的成本账按这个数统计,
-    整体虚高一个量级;ch05 早先那道 token 预算闸也因此第一步就跳闸,工具从没执行过。
+    ——实测 24 个 chunk、input 恒为 11,聚合出来是 264。可观测模块 的成本账按这个数统计,
+    整体虚高一个量级;工作流模块 早先那道 token 预算闸也因此第一步就跳闸,工具从没执行过。
     开关救不了:`stream_usage=False` 时上游照发、库照加。
 
     修法是在 chunk 转换的入口把累计值换成增量,再交给上游逻辑去加,加完正好等于最后一个
@@ -76,7 +72,7 @@ def get_chat_model(streaming: bool = False, model: str | None = None,
                    thinking: bool = True) -> ChatOpenAI:
     """直连聊天上游,说 OpenAI 协议。
     model 显式覆盖模型名(意图识别可配更大模型求准),None 时回落 settings.chat_model。
-    ch09:usage 统一收口——流式也回传 token(等效 stream_options.include_usage),
+    可观测模块:usage 统一收口——流式也回传 token(等效 stream_options.include_usage),
     否则 Langfuse 按意图统计只有非流式调用的账,主力 Agent 全漏。
 
     temperature 默认 0.3(答用户的话要有点人味)。**当评委用的链路要显式传 0**:

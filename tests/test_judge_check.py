@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """裁判回归的取样与判定:台账里哪些个案能当考题、人工处置怎么翻译成标准答案。
 
 这一层必须是纯函数、必须有测试:整轮回归的结论(裁判和人工一致率)全建在它上面。
@@ -21,7 +17,7 @@ class _Row:
 
 
 def test_角标原文拼回评估时那份证据():
-    # 格式与 eval_ch04._format_evidence 逐字一致:[n] 问题:答案,一条一行
+    # 格式与 eval_rag._format_evidence 逐字一致:[n] 问题:答案,一条一行
     assert evidence_from_citations(CITS) == (
         "[1] 退款时效:到账时效以平台售后规则为准。\n[2] 处理时限:退款 3 个工作日。")
 

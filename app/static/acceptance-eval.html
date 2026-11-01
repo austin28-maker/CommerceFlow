@@ -1,15 +1,11 @@
 <!doctype html>
 <!--
-  来源：公众号@小林coding
-  后端八股网站：xiaolincoding.com
-  Agent网站：xiaolinnote.com
-  简历模版：jianli.xiaolinnote.com
 -->
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>喵喵优选 · 分类器评测详情</title>
+  <title>CommerceFlow · 分类器评测详情</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'><rect x='2' y='2' width='4' height='4' fill='%232b2632'/><rect x='10' y='2' width='4' height='4' fill='%232b2632'/><rect x='2' y='4' width='12' height='9' fill='%232b2632'/><rect x='3' y='3' width='2' height='3' fill='%23ff9f57'/><rect x='11' y='3' width='2' height='3' fill='%23ff9f57'/><rect x='3' y='5' width='10' height='7' fill='%23ff9f57'/><rect x='5' y='7' width='1' height='2' fill='%232b2632'/><rect x='10' y='7' width='1' height='2' fill='%232b2632'/><rect x='7' y='9' width='2' height='1' fill='%23ff8095'/></svg>" />
   <link rel="stylesheet" href="/static/acceptance.css" />
   <style>
@@ -151,7 +147,7 @@
           + (gap <= 0.02 ? "各类成绩均匀，没有类目出问题被总分盖住。"
             : "差距偏大，micro 高 macro 低说明有小类目被牺牲，去下面每类指标里找是哪个。")));
       }
-      if (jobSpecs["ch10-eval"]) pAvg.appendChild(jobRow([jobSpecs["ch10-eval"]], load,
+      if (jobSpecs["classifier-eval"]) pAvg.appendChild(jobRow([jobSpecs["classifier-eval"]], load,
         "评测集 " + (ev.present ? ev.test_size + " 条" : "test.jsonl")));
       body.appendChild(pAvg);
 
@@ -228,8 +224,8 @@
             : "，两者不一致 🔴——重新导出或重跑扫描。")
           + " 验证集 " + scan.val_size + " 条，跑于 " + fmtTime(scan.ran_at) + "。"));
       }
-      if (jobSpecs["ch10-threshold-scan"]) pScan.appendChild(
-        jobRow([jobSpecs["ch10-threshold-scan"]], load,
+      if (jobSpecs["classifier-threshold-scan"]) pScan.appendChild(
+        jobRow([jobSpecs["classifier-threshold-scan"]], load,
           d.classifier.online ? ":8110 在线" : ":8110 离线，先去总览页拉起服务"));
       body.appendChild(pScan);
 

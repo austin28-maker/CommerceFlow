@@ -1,5 +1,5 @@
 [project]
-name = "mewhelp"
+name = "commerceflow"
 version = "0.1.0"
 requires-python = ">=3.12"
 dependencies = [
@@ -30,7 +30,7 @@ dev = [
     "pytest>=9.1.1",
     "pytest-asyncio>=1.4.0",
 ]
-# ch10 训练/导出重依赖:主应用运行时不需要,uv run --group ml 按需装
+# classifier 训练/导出重依赖:主应用运行时不需要,uv run --group ml 按需装
 ml = [
     "torch>=2.6",
     "transformers>=4.46",

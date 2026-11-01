@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 from langchain_core.tools import tool
 from pydantic import BaseModel, Field
 
@@ -21,7 +17,7 @@ async def query_faq(keyword: str, category: str | None = None) -> dict:
     返回带编号证据供作答引用;证据不足时返回 sufficient=False,请据此向用户拒答。"""
     u = await query_understanding.understand(keyword)
     query = u["standard"]
-    # 同义词扩展只拼进 BM25 检索文本(检索侧),不改 dense query、不改标准问法语义(ch04 spec §2)
+    # 同义词扩展只拼进 BM25 检索文本(检索侧),不改 dense query、不改标准问法语义(检索评测模块 spec §2)
     bm25_text = query + (" " + " ".join(u["expanded"]) if u["expanded"] else "")
 
     hits = await retrieval.search_knowledge(
@@ -58,6 +54,6 @@ async def query_faq(keyword: str, category: str | None = None) -> dict:
 
 
 # query_faq 走 RAG 管线(改写+混合检索+重排+自评,多次上游往返):远慢于默认 5s 给 30s;
-# 超时多为上游慢而非瞬时抖动,重试大概率仍超时纯烧时间 → max_retries=0(沿 ch05 NO_RETRY 的理由)
+# 超时多为上游慢而非瞬时抖动,重试大概率仍超时纯烧时间 → max_retries=0(沿 工作流模块 NO_RETRY 的理由)
 registry.register(registry.spec_from_langchain_tool(
     query_faq, source="builtin", timeout=30.0, max_retries=0))

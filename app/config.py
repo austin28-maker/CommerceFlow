@@ -1,14 +1,10 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
     model_config = SettingsConfigDict(env_file=".env", extra="ignore")
 
-    # 必填,故意不给默认值。模型名是跟着账号走的,给一个默认值等于替学员猜:猜错不会在
+    # 必填,故意不给默认值。模型名是跟着账号走的,给一个默认值等于替使用者猜:猜错不会在
     # 启动时报错,而是在第一次调模型时抛一个看不懂的上游 401。没有默认值,缺了就在启动
     # 时报 chat_model Field required,直接指向 .env。调优常量(top_k、步数、阈值这些)
     # 是另一类,它们该留在代码里带默认值。
@@ -29,23 +25,23 @@ class Settings(BaseSettings):
     chat_reasoning_split: str = ""    # MiniMax 专属:true 让思考进 reasoning_content 独立字段,
                                       # 而不是混在 content 里的 <think>。关不掉思考链时靠它兜底
     token_budget: int = 2000
-    database_url: str = "mysql+asyncmy://root:root@localhost:3306/mewhelp"
-    test_database_url: str = "mysql+asyncmy://root:root@localhost:3306/mewhelp_ch02_test"
-    # ch03 知识库检索
+    database_url: str = "mysql+asyncmy://root:root@localhost:3306/commerceflow"
+    test_database_url: str = "mysql+asyncmy://root:root@localhost:3306/commerceflow_test"
+    # 知识库模块 知识库检索
     embed_model: str = "BAAI/bge-m3"          # 上游真实名(无网关别名可用)
-    milvus_uri: str = "http://localhost:19530"   # ch04: Lite → Standalone
-    # ch04 混合检索 + 重排
+    milvus_uri: str = "http://localhost:19530"   # 检索评测模块: Lite → Standalone
+    # 检索评测模块 混合检索 + 重排
     rerank_model: str = "BAAI/bge-reranker-v2-m3"   # 上游真实名
     recall_top_k: int = 50        # dense/BM25 各召回 Top-50
     rerank_top_k: int = 10        # 精排出 Top-10
     subquery_split: bool = True   # 一问多意图时按子句拆开各检索一遍再轮转合并(见 retrieval)
     rerank_min_score: float = 0.3 # 重排最高分低于此 → 检索证据低,拒答
-    # ch05 图编排
+    # 工作流模块 图编排
     max_agent_steps: int = 6              # ReAct 环最大步数(封顶,超则兜底)
-    # token 花销不在环里卡:那是成本控制,归 ch09 跟 Langfuse 的账一起看。
+    # token 花销不在环里卡:那是成本控制,归 可观测模块 跟 Langfuse 的账一起看。
     # tokens_used 仍逐步累加,进 trace 供排障和统计,只是不再当停止条件。
-    checkpointer_db_path: str = "data/ch05_checkpoints.sqlite"  # LangGraph checkpointer(data/*.db* 已 gitignore)
-    # ch06 意图识别模型配置(先求准:默认大模型;降级路仅种子,本章不实现运行时)
+    checkpointer_db_path: str = "data/agent_checkpoints.sqlite"  # LangGraph checkpointer(data/*.db* 已 gitignore)
+    # 意图分流模块 意图识别模型配置(先求准:默认大模型;降级路仅种子,本阶段不实现运行时)
     # 意图识别、摘要各是一个模型槽位:三项留空就跟 CHAT 用同一家,
     # 想把某个用途换到别家上游(比如摘要走更便宜的托管方)才填这两组。
     intent_base_url: str = ""         # 空=回落 chat_base_url
@@ -56,11 +52,11 @@ class Settings(BaseSettings):
     intent_small_model: str = ""      # 降级路小模型(种子,未接运行时)
     intent_mode: str = "accuracy"     # accuracy=只用大模型;cost=小模型判→低置信升级大模型(未实现)
     intent_conf_threshold: float = 0.6  # cost 模式升级阈值(种子)
-    # ch07 会话上下文管理(滑窗 + 异步摘要)
+    # 上下文模块 会话上下文管理(滑窗 + 异步摘要)
     context_window_max_tokens: int = 0    # 滑窗 token 上限。0=按 core/budget 的预算算,
                                           # 填非 0 则手动覆盖(回滚用)
     summary_model: str = ""               # 摘要模型,空=回落 chat_model
-    # ch07+ 上下文预算:窗口按块分配,系统提示/检索证据/输出各占一块,滑窗拿剩下的
+    # 上下文模块+ 上下文预算:窗口按块分配,系统提示/检索证据/输出各占一块,滑窗拿剩下的
     model_context_window: int = 0           # 模型窗口。留 0 表示按 chat_model 名字查表(见 core/budget),
                                             # 填非 0 则以这里为准。OpenAI 兼容接口拿不到这个值,只能本地配
     context_budget_turns: int = 20          # 预算按多少轮的最坏情况留;这个量以内的对话不会被裁掉
@@ -83,22 +79,22 @@ class Settings(BaseSettings):
     # count_tokens_approximately 默认 chars_per_token=4.0 按英文定,中文偏低(实测 29 个汉字
     # 估成 12 token)。中文语料按 1 字≈1.2 token 校准。
     zh_chars_per_token: float = 1.2
-    # ch08 工具系统(注册中心 + 执行引擎 + MCP 接入)
+    # 工具执行模块 工具系统(注册中心 + 执行引擎 + MCP 接入)
     mcp_logistics_url: str = "http://127.0.0.1:8101/mcp"    # 物流 MCP Server
     mcp_aftersales_url: str = "http://127.0.0.1:8102/mcp"   # 售后 MCP Server
     tool_default_timeout: float = 5.0    # 内置工具默认超时(秒)
     mcp_tool_timeout: float = 10.0       # MCP 工具默认超时(走 HTTP,放宽)
     tool_max_retries: int = 2            # 只读工具暂时性故障最大重试次数
     demo_ticket_delay_seconds: float = 0.0  # 验收 6:>0 时 create_ticket 人为变慢(写超时演示)
-    # ch09 可观测(Langfuse 自部署;三者齐全才挂回调,缺省时系统照常跑、测试环境不依赖)
+    # 可观测模块 可观测(Langfuse 自部署;三者齐全才挂回调,缺省时系统照常跑、测试环境不依赖)
     # 环境变量名与课程 README/SDK 一致:LANGFUSE_PUBLIC_KEY / LANGFUSE_SECRET_KEY / LANGFUSE_BASE_URL
     langfuse_public_key: str = ""
     langfuse_secret_key: str = ""
     langfuse_base_url: str = ""     # 如 http://localhost:3000(自部署地址,数据不出门)
-    # ch09 置信度闸(正式版):阈值由 make calibrate-confidence 在 ch04 评估集上校准回填,不拍脑袋
+    # 可观测模块 置信度闸(正式版):阈值由 make calibrate-confidence 在 检索评测模块 评估集上校准回填,不拍脑袋
     # 实测:可答桶 p50=0.704 vs 应拒桶 p50=0.102/max=0.290,YoudenJ 最优点 0.17
     # 选 0.30 而非 0.17:误放代价远大于误拦,宁可多转人工也不放编造答案
-    # (可答通过率 82.9%、应拒放行率 0%,报告见 data/ch09/reports/confidence_calibration.txt,
+    # (可答通过率 82.9%、应拒放行率 0%,报告见 data/observability/reports/confidence_calibration.txt,
     #  「观测与成本」页 /observability 上也能看,推荐值与这里不一致时页面会标出来)
     evidence_confidence_threshold: float = 0.30
 

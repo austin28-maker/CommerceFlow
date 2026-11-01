@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 def test_create_refund_writes_ticket(client, monkeypatch):
     async def fake_create(cid, desc, ttype):
         assert cid == 7 and ttype == "退款" and "1001" in desc and "质量问题" in desc
@@ -37,7 +33,7 @@ def test_resume_endpoint_streams(client, monkeypatch):
 
 
 def test_resume_endpoint_confirmed_branch(client, monkeypatch):
-    """ch08:工单预览卡确认/取消走 confirmed 字段,resume 值为 {"confirmed": bool}。"""
+    """工具执行模块:工单预览卡确认/取消走 confirmed 字段,resume 值为 {"confirmed": bool}。"""
     async def fake_stream_resume(cid, resume_value):
         assert cid == 3 and resume_value == {"confirmed": False}
         yield {"type": "delta", "text": "已取消建单"}

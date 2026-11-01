@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 import pathlib
 
 import pytest
@@ -14,21 +10,21 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from app.config import settings
 
 _DDL_FILES = [
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch02-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch03-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "001_business_schema.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "003_knowledge_schema.sql",
     # 挖知识加人工闸:给 qa_extraction_staging 的 status 补 approved/rejected 两个终态
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch03-staging-review.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch04-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch07-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "005_knowledge_review_status.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "006_rag_evaluation_schema.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "008_conversation_summary.sql",
     # 分层上下文:conversations 加层1 锚点 + 分段摘要表
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch07-layers.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch08-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch09-ddl.sql",
-    pathlib.Path(__file__).resolve().parent.parent / "sql" / "ch10-ddl.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "009_context_layers.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "010_tool_audit_schema.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "011_flywheel_schema.sql",
+    pathlib.Path(__file__).resolve().parent.parent / "sql" / "012_topic_classifier_schema.sql",
 ]
 # 删除顺序:先子表后父表;knowledge_chunks 自引用 FK 靠 FOREIGN_KEY_CHECKS=0 兜
-# ch09:low_confidence_questions 有 FK 指向 review_queue,排它前面
-# ch10:topic_classifications 有 FK 指向 low_confidence_questions,必须排它前面先删
+# 可观测模块:low_confidence_questions 有 FK 指向 review_queue,排它前面
+# 分类器模块:topic_classifications 有 FK 指向 low_confidence_questions,必须排它前面先删
 _TABLES = ["faith_cases", "topic_classifications", "low_confidence_questions", "review_queue", "eval_runs",
            "conversation_summaries",
            "messages", "tickets", "tool_audit_logs", "conversations", "faq",
@@ -40,7 +36,7 @@ _SERVER_URL = _TEST_URL.rsplit("/", 1)[0]
 
 
 def _split_sql(sql: str) -> list[str]:
-    """按分号切语句,但跳过单引号字符串内的分号(ch09 起 COMMENT 文案里出现 ; 和 :)。"""
+    """按分号切语句,但跳过单引号字符串内的分号(可观测模块 起 COMMENT 文案里出现 ; 和 :)。"""
     stmts, buf, in_str = [], [], False
     for ch in sql:
         if ch == "'":
@@ -60,7 +56,7 @@ def _create_table_stmts() -> list[str]:
     for ddl in _DDL_FILES:
         raw = ddl.read_text(encoding="utf-8")
         sql = "\n".join(ln for ln in raw.splitlines() if not ln.lstrip().startswith("--"))
-        # ch07 起有 ALTER TABLE(给既有表加列);文件列表顺序保证先 CREATE 后 ALTER
+        # 上下文模块 起有 ALTER TABLE(给既有表加列);文件列表顺序保证先 CREATE 后 ALTER
         for s in _split_sql(sql):
             s = s.strip()
             if not s:
@@ -75,7 +71,7 @@ def _create_table_stmts() -> list[str]:
 
 @pytest.fixture(autouse=True)
 def _no_langfuse(monkeypatch):
-    """ch09:测试一律关闭 Langfuse——.env 若配了三变量,graph 测试里的 tag_intent
+    """可观测模块:测试一律关闭 Langfuse——.env 若配了三变量,graph 测试里的 tag_intent
     会把意图事件真发到本地 Langfuse(0-token 垃圾 trace 污染成本账,实测踩坑)。
     test_observability 里要开的用例自行 monkeypatch 覆盖,不受影响。"""
     monkeypatch.setattr("app.config.settings.langfuse_public_key", "")
@@ -83,7 +79,7 @@ def _no_langfuse(monkeypatch):
 
 @pytest_asyncio.fixture()
 async def _test_engine():
-    """function 级:确保测试库存在 + 重建 ch02+ch03 共 6 表。engine 在当前 event loop 创建/销毁,避免跨 loop。"""
+    """function 级:确保测试库存在 + 重建 业务工具模块+知识库模块 共 6 表。engine 在当前 event loop 创建/销毁,避免跨 loop。"""
     admin = create_async_engine(_SERVER_URL, isolation_level="AUTOCOMMIT")
     async with admin.connect() as conn:
         await conn.execute(
@@ -99,7 +95,7 @@ async def _test_engine():
         await conn.execute(text("SET FOREIGN_KEY_CHECKS=1"))
         for stmt in _create_table_stmts():
             # exec_driver_sql:原样执行,不做 :name 绑定参数解析
-            # (ch09 eval_runs 的 COMMENT 里有 JSON 示例 {"recall_at_k":0.82},text() 会把 :0 当参数)
+            # (可观测模块 eval_runs 的 COMMENT 里有 JSON 示例 {"recall_at_k":0.82},text() 会把 :0 当参数)
             await conn.exec_driver_sql(stmt)
     yield engine
     await engine.dispose()

@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """祛魅:不用任何框架,手写最裸的 Agent 循环——看清它就是个带工具清单的 for 循环。
 用法:.venv/bin/python -m scripts.bare_agent_loop "订单1001的物流到哪了"
 """
@@ -16,7 +12,11 @@ from app.tools import engine, registry
 
 
 async def run_agent(query: str, max_turns: int = 6):
-    specs = {s.name: s for s in await registry.get_all_specs()}   # ch08:内置+MCP 现拉
+    """运行裸 Agent 循环"""
+
+    # 加载所有工具规格
+    specs = {s.name: s for s in await registry.get_all_specs()}   # 工具执行模块:内置+MCP 现拉
+
     model = get_chat_model().bind_tools([s.tool for s in specs.values()])
     messages = [SystemMessage(AGENT_SYSTEM), HumanMessage(query)]
     for step in range(1, max_turns + 1):
@@ -34,6 +34,8 @@ async def run_agent(query: str, max_turns: int = 6):
 
 
 async def main():
+    """主函数"""
+    
     query = sys.argv[1] if len(sys.argv) > 1 else "订单1001的物流到哪了"
     print("问题:", query)
     print("答复:", await run_agent(query))

@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 import json
 import logging
 from collections.abc import AsyncIterator
@@ -30,7 +26,7 @@ def _sse(payload: dict) -> str:
 
 @router.post("/api/actions/create-ticket", response_model=CreateTicketResponse)
 async def create_ticket_action(req: CreateTicketRequest) -> CreateTicketResponse:
-    """建工单按钮:用户点了才写 tickets 表(复用 ch02 工单能力)。转人工是另一件事,纯前端。"""
+    """建工单按钮:用户点了才写 tickets 表(复用 业务工具模块 工单能力)。转人工是另一件事,纯前端。"""
     try:
         ticket_no = await repository.create_ticket(
             req.conversation_id, req.description, req.ticket_type)
@@ -42,7 +38,7 @@ async def create_ticket_action(req: CreateTicketRequest) -> CreateTicketResponse
 
 @router.post("/api/actions/create-refund", response_model=CreateRefundResponse)
 async def create_refund_action(req: CreateRefundRequest) -> CreateRefundResponse:
-    """退款表单提交:写 tickets(ticket_type='退款'),描述带订单号 + 固定类目原因。复用 ch02 工单能力。"""
+    """退款表单提交:写 tickets(ticket_type='退款'),描述带订单号 + 固定类目原因。复用 业务工具模块 工单能力。"""
     desc = f"退款申请 订单号={req.order_id} 原因={req.reason}"
     try:
         ticket_no = await repository.create_ticket(req.conversation_id, desc, "退款")
@@ -55,7 +51,7 @@ async def create_refund_action(req: CreateRefundRequest) -> CreateRefundResponse
 @router.post("/api/actions/resume")
 async def resume_action(req: ResumeRequest):
     """中断续跑(SSE,事件与 /api/chat 同构):订单选择器点选回 order_id;
-    工单预览卡回 confirmed(ch08,resume 值为 {"confirmed": bool},agent_tools 按此放行/拒绝)。"""
+    工单预览卡回 confirmed(工具执行模块,resume 值为 {"confirmed": bool},agent_tools 按此放行/拒绝)。"""
     if req.order_id is None and req.confirmed is None:
         raise HTTPException(status_code=400, detail="order_id 与 confirmed 至少传一个")
     resume_value = req.order_id if req.order_id is not None else {"confirmed": bool(req.confirmed)}

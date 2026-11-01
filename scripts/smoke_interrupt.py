@@ -1,8 +1,4 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
-"""ch06 红线冒烟:interrupt/Command(resume) 在当前 langgraph 上的中断 surface 形状。
+"""意图分流模块 红线冒烟:interrupt/Command(resume) 在当前 langgraph 上的中断 surface 形状。
 不调聊天上游——只用一个纯 interrupt 节点。用法:.venv/bin/python -m scripts.smoke_interrupt
 
 钉死三件事(供 Task 7 fetch_order / Task 13 runtime 落地):

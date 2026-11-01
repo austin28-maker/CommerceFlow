@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """读图小注:模型可以写,但编出来的数一个都不许上页面——数字校验是这层的主闸。"""
 import pytest
 
@@ -112,6 +108,6 @@ async def test_generate_all_keeps_only_the_good_ones():
 
 @pytest.mark.parametrize("kind", sorted(read_notes.KINDS))
 def test_every_kind_declares_what_and_why(kind):
-    """每类图都得交代「画的是什么」和「读者要做什么判断」,不然模型只能瞎猜。"""
+    """每类图都得交代「画的是什么」和「使用者要做什么判断」,不然模型只能瞎猜。"""
     what, decision = read_notes.KINDS[kind]
     assert len(what) > 10 and len(decision) > 8

@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 from typing import Annotated
 from typing_extensions import TypedDict
 
@@ -21,12 +17,12 @@ def merge_dict(a: dict | None, b: dict | None) -> dict:
 
 class ConversationState(TypedDict, total=False):
     messages: Annotated[list[AnyMessage], add_messages]  # 跨轮历史,checkpointer 续接
-    summary: str            # ch07 早期轮次滚动摘要(入口每轮从 conversations 加载)
+    summary: str            # 上下文模块 早期轮次滚动摘要(入口每轮从 conversations 加载)
     summary_upto_msg_id: int  # 摘要覆盖到的 MySQL 消息 id,滑窗从其后接原文
     layer1_from_msg_id: int   # 层1(原文)起点,此 id 之前渲染成半压形态
     user_id: str
     conversation_id: int
-    intent: str            # 九类之一(ch08 增「人工」)
+    intent: str            # 九类之一(工具执行模块 增「人工」)
     resolved_query: str    # 指代消解+改写后的完整问句(下游检索/判意图都用它)
     intent_confidence: float  # 意图 JSON 的 confidence(0-1)
     order_id: str          # refund_flow:抽到/点选回填的订单号
@@ -35,9 +31,9 @@ class ConversationState(TypedDict, total=False):
     evidence: str          # 知识路编号证据文本
     citations: list        # 引用 chunk(前端可点)
     evidence_strong: bool  # 生成前证据闸信号
-    evidence_confidence: float  # ch09 正式置信度闸:四信号加权总分(0-1)
-    fallback_source: str        # ch09 兜底落池 source:retrieval_low_conf | self_check
-    retrieved_snapshot: list    # ch09 召回快照(Top3 原文+得分):走了检索就有,落池/👎回捞共用
+    evidence_confidence: float  # 可观测模块 正式置信度闸:四信号加权总分(0-1)
+    fallback_source: str        # 可观测模块 兜底落池 source:retrieval_low_conf | self_check
+    retrieved_snapshot: list    # 可观测模块 召回快照(Top3 原文+得分):走了检索就有,落池/👎回捞共用
     answer: str            # 确定性节点产出的答复(agent 答复走流式,不落此字段)
     steps: int             # ReAct 步数(停止条件)
     tokens_used: int       # token 预算累加

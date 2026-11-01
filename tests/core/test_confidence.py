@@ -1,8 +1,4 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
-"""ch09 置信度闸:四信号(Top1 分/有效证据数/分差/关键条款)加权,纯函数可复现。"""
+"""可观测模块 置信度闸:四信号(Top1 分/有效证据数/分差/关键条款)加权,纯函数可复现。"""
 import pytest
 
 from app.core.confidence import EvidenceConfidence, compute_evidence_confidence, snapshot_from_hits

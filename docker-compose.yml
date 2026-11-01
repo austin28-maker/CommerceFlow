@@ -1,32 +1,32 @@
 services:
   mysql:
-    image: mysql:8   # 8.4 系;dev 数据卷自 ch02 起就是 8.4 的数据文件,钉 8.0 会拒绝降级启动
-    container_name: mewhelp-mysql
+    image: mysql:8   # 8.4 系;dev 数据卷自 业务工具模块 起就是 8.4 的数据文件,钉 8.0 会拒绝降级启动
+    container_name: commerceflow-mysql
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: mewhelp
+      MYSQL_DATABASE: commerceflow
     ports:
       - "3306:3306"
     volumes:
-      - mewhelp-mysql-data:/var/lib/mysql
-      - ./sql:/docker-entrypoint-initdb.d:ro   # 首启按文件名序执行 ch02-ddl.sql → ch02-seed.sql
+      - commerceflow-mysql-data:/var/lib/mysql
+      - ./sql:/docker-entrypoint-initdb.d:ro   # 首启按文件名序执行 001_business_schema.sql → 002_business_seed.sql
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-proot"]
       interval: 3s
       timeout: 3s
       retries: 20
 
-  # ch04: Milvus Standalone(唯 Standalone 支持原生 BM25 全文检索)+ etcd + minio
+  # 检索评测模块: Milvus Standalone(唯 Standalone 支持原生 BM25 全文检索)+ etcd + minio
   etcd:
     image: quay.io/coreos/etcd:v3.5.16
-    container_name: mewhelp-milvus-etcd
+    container_name: commerceflow-milvus-etcd
     environment:
       - ETCD_AUTO_COMPACTION_MODE=revision
       - ETCD_AUTO_COMPACTION_RETENTION=1000
       - ETCD_QUOTA_BACKEND_BYTES=4294967296
       - ETCD_SNAPSHOT_COUNT=50000
     volumes:
-      - mewhelp-milvus-etcd:/etcd
+      - commerceflow-milvus-etcd:/etcd
     command: etcd -advertise-client-urls=http://etcd:2379 -listen-client-urls http://0.0.0.0:2379 --data-dir /etcd
     healthcheck:
       test: ["CMD", "etcdctl", "endpoint", "health"]
@@ -36,12 +36,12 @@ services:
 
   minio:
     image: milvusdb/minio:RELEASE.2024-05-28T17-19-04Z   # 2026-09 MinIO 官方从 Docker Hub 删了 minio/minio,改用 Milvus 维护的同版本镜像
-    container_name: mewhelp-milvus-minio
+    container_name: commerceflow-milvus-minio
     environment:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
     volumes:
-      - mewhelp-milvus-minio:/minio_data
+      - commerceflow-milvus-minio:/minio_data
     command: minio server /minio_data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -51,13 +51,13 @@ services:
 
   milvus-standalone:
     image: milvusdb/milvus:v2.6.22
-    container_name: mewhelp-milvus
+    container_name: commerceflow-milvus
     command: ["milvus", "run", "standalone"]
     environment:
       ETCD_ENDPOINTS: etcd:2379
       MINIO_ADDRESS: minio:9000
     volumes:
-      - mewhelp-milvus-data:/var/lib/milvus
+      - commerceflow-milvus-data:/var/lib/milvus
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9091/healthz"]
       interval: 30s
@@ -72,7 +72,7 @@ services:
       - minio
 
 volumes:
-  mewhelp-mysql-data:
-  mewhelp-milvus-etcd:
-  mewhelp-milvus-minio:
-  mewhelp-milvus-data:
+  commerceflow-mysql-data:
+  commerceflow-milvus-etcd:
+  commerceflow-milvus-minio:
+  commerceflow-milvus-data:

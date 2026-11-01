@@ -1,8 +1,4 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
-"""型号机械闸:拿 ch04 评估真判出来的那条幻觉当第一条用例。"""
+"""型号机械闸:拿 检索评测模块 评估真判出来的那条幻觉当第一条用例。"""
 from app.core import model_guard as g
 
 # A52 的真实答案片段:库里只有 MH-CAM1 和 MH-FD30,答案里冒出了不存在的 MH-CAD1

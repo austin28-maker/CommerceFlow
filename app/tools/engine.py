@@ -1,8 +1,4 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
-"""ch08 统一执行引擎:所有工具调用的唯一通道。
+"""工具执行模块 统一执行引擎:所有工具调用的唯一通道。
 管道:查工具 → JSON Schema 校验 → 权限门 → 执行(超时/重试)→ 分诊 → 格式化 + 审计。
 坏消息如实回灌模型;审计写失败只 log,绝不反拦工具执行。"""
 import asyncio
@@ -94,7 +90,7 @@ def _cap_tokens(content: str) -> str:
 
 async def _audit(conversation_id, tool_call_id, name, spec: ToolSpec | None, args,
                  result_summary, status, error_message, retry_count, duration_ms) -> None:
-    # ch08 验收可观测(照 ch07 model_ctx 惯例):每次工具调用一行 tool_run,来源/Server/结局
+    # 工具执行模块 验收可观测(照 上下文模块 model_ctx 惯例):每次工具调用一行 tool_run,来源/Server/结局
     # tail -f log/app.log 直接看——"这次真走了 MCP"不用翻库
     logger.info("tool_run conv=%s tool=%s source=%s server=%s status=%s retry=%s duration_ms=%s%s",
                 conversation_id or "-", name,

@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 from langchain_core.messages import AIMessage, HumanMessage
 
 from app.core.memory import SessionStore, trim_history
@@ -35,7 +31,7 @@ def test_trim_noop_when_under_budget():
     assert trim_history(msgs, max_tokens=2000) == msgs
 
 
-# ---- ch07 锚点切窗 + 摘要注入 ----
+# ---- 上下文模块 锚点切窗 + 摘要注入 ----
 
 from langchain_core.messages import SystemMessage
 
@@ -67,7 +63,7 @@ def test_build_window_no_boundary_keeps_all():
 
 
 def test_build_window_anchor_missing_degrades_to_trim():
-    msgs = [HumanMessage("旧消息无锚点"), AIMessage("答")] * 3   # ch07 前的旧会话消息
+    msgs = [HumanMessage("旧消息无锚点"), AIMessage("答")] * 3   # 上下文模块 前的旧会话消息
     win = build_window(list(msgs), summary_upto_msg_id=99, max_tokens=100000)
     assert len(win) == 6                     # 找不到锚点 → 不切,整段进 trim
 

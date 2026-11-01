@@ -1,15 +1,11 @@
 <!doctype html>
 <!--
-  来源：公众号@小林coding
-  后端八股网站：xiaolincoding.com
-  Agent网站：xiaolinnote.com
-  简历模版：jianli.xiaolinnote.com
 -->
 <html lang="zh-CN">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>喵喵优选 · 智能客服</title>
+  <title>CommerceFlow · 智能客服</title>
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' shape-rendering='crispEdges'><rect x='2' y='2' width='4' height='4' fill='%232b2632'/><rect x='10' y='2' width='4' height='4' fill='%232b2632'/><rect x='2' y='4' width='12' height='9' fill='%232b2632'/><rect x='3' y='3' width='2' height='3' fill='%23ff9f57'/><rect x='11' y='3' width='2' height='3' fill='%23ff9f57'/><rect x='3' y='5' width='10' height='7' fill='%23ff9f57'/><rect x='5' y='7' width='1' height='2' fill='%232b2632'/><rect x='10' y='7' width='1' height='2' fill='%232b2632'/><rect x='7' y='9' width='2' height='1' fill='%23ff8095'/></svg>" />
   <style>
     :root {
@@ -59,7 +55,7 @@
       }
     }
 
-    /* ---------- ch07:会话侧栏(多会话切换,验收长对话记忆用) ---------- */
+    /* ---------- context:会话侧栏(多会话切换,验收长对话记忆用) ---------- */
     #sidebar {
       flex: none;
       width: 224px;
@@ -215,7 +211,7 @@
       margin: 6px 0; padding: 2px 10px; border-left: 3px solid var(--muted); color: var(--muted);
     }
 
-    /* ---------- ch04:可点引用角标 + 来源浮层 ---------- */
+    /* ---------- retrieval:可点引用角标 + 来源浮层 ---------- */
     .cite {
       cursor: pointer;
       color: var(--coral);
@@ -249,7 +245,7 @@
     .cite-pop-a { color: var(--ink); white-space: pre-wrap; word-break: break-word; }
     .cite-pop-meta { margin-top: 7px; font-size: 11px; color: var(--muted); }
 
-    /* ---------- ch04:每段回答满意度反馈(👍/👎) ---------- */
+    /* ---------- retrieval:每段回答满意度反馈(👍/👎) ---------- */
     .feedback { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
     .fb-btn {
       border: 2px solid var(--ink);
@@ -317,7 +313,7 @@
     .chip:hover { background: #ffedd6; }
     .chip:active { transform: translate(3px, 3px); box-shadow: none; }
 
-    /* ---------- ch05:actions 帧 - 转人工/建工单两独立按钮 ---------- */
+    /* ---------- workflow:actions 帧 - 转人工/建工单两独立按钮 ---------- */
     .action-bar { display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
     .action-btn {
       border: 3px solid var(--ink);
@@ -334,7 +330,7 @@
     .action-btn:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
     .action-btn:disabled { background: #e8dcc8; color: var(--muted); cursor: not-allowed; }
 
-    /* ---------- ch05:建工单表单弹窗 ---------- */
+    /* ---------- workflow:建工单表单弹窗 ---------- */
     .modal-mask {
       position: fixed; inset: 0; z-index: 50;
       background: rgba(43, 38, 50, .45);
@@ -375,13 +371,13 @@
     .modal-actions .submit:hover:not(:disabled) { background: #ff6a45; }
     .modal-actions button:active:not(:disabled) { transform: translate(3px, 3px); box-shadow: none; }
     .modal-actions .submit:disabled { background: #e8dcc8; color: var(--muted); cursor: not-allowed; }
-    /* ch06:退款表单只读订单号输入框 */
+    /* intent_routing:退款表单只读订单号输入框 */
     .ticket-field input {
       width: 100%; font-family: inherit; font-size: 13px; color: var(--muted);
       border: 3px solid var(--ink); background: #efe6d4;
       padding: 9px 10px; box-shadow: var(--shadow-sm);
     }
-    /* ch06:订单选择器卡片(interrupt 缺订单号时聊天流里点选) */
+    /* intent_routing:订单选择器卡片(interrupt 缺订单号时聊天流里点选) */
     .order-cards { display: flex; flex-direction: column; gap: 8px; margin-top: 10px; }
     .order-card {
       text-align: left; border: 3px solid var(--ink); background: var(--cream);
@@ -396,7 +392,7 @@
     .order-card .oc-mid { font-size: 12.5px; margin-top: 2px; }
     .order-card .oc-bot { font-size: 11.5px; color: var(--muted); margin-top: 2px; }
 
-    /* ---------- ch08:工单预览确认卡(interrupt confirm_ticket) ---------- */
+    /* ---------- tool_system:工单预览确认卡(interrupt confirm_ticket) ---------- */
     .ticket-confirm {
       border: 3px solid var(--ink); background: var(--cream);
       padding: 10px 12px; margin-top: 10px; box-shadow: var(--shadow-sm);
@@ -488,7 +484,7 @@
     </div><!-- /.main -->
   </div>
 
-  <!-- ch05:建工单表单弹窗(点「建工单」弹出,选类别+填描述再提交) -->
+  <!-- workflow:建工单表单弹窗(点「建工单」弹出,选类别+填描述再提交) -->
   <div class="modal-mask" id="ticketMask">
     <div class="ticket-modal" role="dialog" aria-modal="true" aria-labelledby="ticketTitle">
       <h3 id="ticketTitle">创建工单</h3>
@@ -542,8 +538,8 @@
   </div>
 
   <script>
-    const SESSION_KEY = "mewhelp_session_id";      // 稳定用户标识,作 user_id
-    const CONV_KEY = "mewhelp_conversation_id";     // 当前会话 id,由后端 done 帧回传
+    const SESSION_KEY = "commerceflow_session_id";      // 稳定用户标识,作 user_id
+    const CONV_KEY = "commerceflow_conversation_id";     // 当前会话 id,由后端 done 帧回传
     const SUGGESTIONS = ["退换货政策是怎样的?", "怎么查我的物流进度?", "猫粮怎么选?", "会员有什么权益?"];
     const CAT_SVG =
       '<svg viewBox="0 0 16 16" shape-rendering="crispEdges">' +
@@ -720,7 +716,7 @@
       return out.join("");
     }
 
-    // ---------- ch04:引用角标 [n] → 可点,弹来源浮层(section_path + 原文) ----------
+    // ---------- retrieval:引用角标 [n] → 可点,弹来源浮层(section_path + 原文) ----------
     let citePop = null;
     function ensureCitePop() {
       if (citePop) return citePop;
@@ -789,7 +785,7 @@
       }
     }
 
-    // ---------- ch04:每段回答满意度反馈(👍/👎,点一次点亮 + 已反馈,一次性)----------
+    // ---------- retrieval:每段回答满意度反馈(👍/👎,点一次点亮 + 已反馈,一次性)----------
     function addFeedbackBar(bubble) {
       if (bubble.querySelector(".feedback")) return;   // 防重复挂
       const bar = document.createElement("div");
@@ -803,7 +799,7 @@
       const done = document.createElement("span");
       done.className = "fb-done"; done.hidden = true; done.textContent = "已反馈,谢谢~";
       bar.append(up, down, done);
-      // ch09:向上找这条回答之前最近的用户气泡,把该轮用户原话带给后端(👎 落池要用)
+      // observability:向上找这条回答之前最近的用户气泡,把该轮用户原话带给后端(👎 落池要用)
       function userQuestionBefore() {
         let row = bubble.closest(".row");
         while (row && (row = row.previousElementSibling)) {
@@ -821,7 +817,7 @@
         other.classList.add("dim");      // 另一个淡出
         up.disabled = true; down.disabled = true;
         done.hidden = false;             // 显示"已反馈"
-        // ch09:反馈接后端——👎 落低置信度问题池进飞轮,👍 后端只记日志;失败静默,UI 行为不变
+        // observability:反馈接后端——👎 落低置信度问题池进飞轮,👍 后端只记日志;失败静默,UI 行为不变
         fetch("/api/feedback", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ conversation_id: getConversationId(),
@@ -834,13 +830,13 @@
       bubble.appendChild(bar);
     }
 
-    // ---------- ch05:actions 帧 - 转人工/建工单两按钮交互 ----------
+    // ---------- workflow:actions 帧 - 转人工/建工单两按钮交互 ----------
     function renderActions(bubble, items) {
       const bar = document.createElement("div");
       bar.className = "action-bar";
       for (const a of items) {
         if (a.type === "select_order") {
-          // ch08:报了不属于自己的订单号被拒,把他名下的单列出来点选。拒绝之后得给条出路,
+          // tool_system:报了不属于自己的订单号被拒,把他名下的单列出来点选。拒绝之后得给条出路,
           // 否则用户既查不到,也不知道自己的单号是多少
           renderOrderCards(bubble, a.orders || [], pickThenAsk);
           continue;
@@ -852,7 +848,7 @@
           btn.textContent = "转人工";
           btn.addEventListener("click", () => {
             btn.disabled = true;
-            // 纯前端模拟:显示已转接 + 客服小猫问候(本章不接真人系统)
+            // 纯前端模拟:显示已转接 + 客服小猫问候(当前未接入真人客服系统)
             const sys = addRow("bot"); sys.textContent = "已转接人工客服";
             const greet = addRow("bot");
             greet.textContent = "您好,我是客服小猫,请问有什么可以帮您的";
@@ -864,7 +860,7 @@
           btn.addEventListener("click", () => openTicketModal(btn));
         } else if (a.type === "refund_form") {
           btn.textContent = "提交退款工单";
-          // ch06:能退时 Agent 调 submit_refund 被拦成此动作,点开退款表单(订单号只读+原因下拉)
+          // intent_routing:能退时 Agent 调 submit_refund 被拦成此动作,点开退款表单(订单号只读+原因下拉)
           btn.addEventListener("click", () => openRefundModal(btn, a.draft || {}));
         }
         bar.appendChild(btn);
@@ -872,7 +868,7 @@
       if (bar.children.length) bubble.appendChild(bar);   // 只有订单卡时不留一条空按钮栏
     }
 
-    // ---------- ch05:建工单表单弹窗控制 ----------
+    // ---------- workflow:建工单表单弹窗控制 ----------
     const ticketMask = document.getElementById("ticketMask");
     const ticketType = document.getElementById("ticketType");
     const ticketDesc = document.getElementById("ticketDesc");
@@ -938,7 +934,7 @@
       }
     });
 
-    // ---------- ch06:退款表单弹窗控制(订单号只读 + 固定类目原因下拉)----------
+    // ---------- intent_routing:退款表单弹窗控制(订单号只读 + 固定类目原因下拉)----------
     const refundMask = document.getElementById("refundMask");
     const refundOrder = document.getElementById("refundOrder");
     const refundReason = document.getElementById("refundReason");
@@ -992,8 +988,8 @@
       }
     });
 
-    // ---------- ch06:订单选择器卡片(interrupt 缺订单号 → 聊天流点选 → resume 续跑)----------
-    // onPick 决定点完卡片干什么:ch06 是 resume 把图续跑下去;ch08 归属校验拒绝之后
+    // ---------- intent_routing:订单选择器卡片(interrupt 缺订单号 → 聊天流点选 → resume 续跑)----------
+    // onPick 决定点完卡片干什么:intent_routing 是 resume 把图续跑下去;tool_system 归属校验拒绝之后
     // 没有待续跑的图,点了就当用户重新问一句(见 pickThenAsk)。卡片长相只此一份。
     function renderOrderCards(bubble, orders, onPick) {
       const intro = document.createElement("div");
@@ -1021,7 +1017,7 @@
       messagesEl.scrollTop = messagesEl.scrollHeight;
     }
 
-    // ch06:点完续跑图(有 interrupt 挂着)
+    // intent_routing:点完续跑图(有 interrupt 挂着)
     async function pickThenResume(o) {
       addRow("user").textContent = "选择订单 " + o.order_id;
       const nb = addRow("bot");
@@ -1039,12 +1035,12 @@
       }
     }
 
-    // ch08:归属校验拒绝之后给的出路。这轮已经答完了,没有图等着续跑,所以走正常发消息那条路
+    // tool_system:归属校验拒绝之后给的出路。这轮已经答完了,没有图等着续跑,所以走正常发消息那条路
     async function pickThenAsk(o) {
       await send("查一下订单 " + o.order_id);
     }
 
-    // ---------- ch08:工单预览确认卡(interrupt confirm_ticket → 确认提交/取消 → resume 续跑)----------
+    // ---------- tool_system:工单预览确认卡(interrupt confirm_ticket → 确认提交/取消 → resume 续跑)----------
     function renderTicketConfirm(bubble, preview) {
       const intro = document.createElement("div");
       intro.className = "bubble-text";
@@ -1163,7 +1159,7 @@
         interrupt: (data) => {
           interrupted = true;
           if (!structured) { bubble.innerHTML = ""; structured = true; }
-          // ch08:中断按 kind 分发——select_order 弹订单卡,confirm_ticket 弹工单预览卡
+          // tool_system:中断按 kind 分发——select_order 弹订单卡,confirm_ticket 弹工单预览卡
           if (data.kind === "confirm_ticket") renderTicketConfirm(bubble, data.preview || {});
           else renderOrderCards(bubble, data.orders || []);
         },
@@ -1193,11 +1189,11 @@
         bubble.textContent = "回复失败,请稍后重试";
       } finally {
         setBusy(false);
-        loadConversations();   // ch07:每轮后刷新侧栏(新会话入列/摘要标记更新)
+        loadConversations();   // context:每轮后刷新侧栏(新会话入列/摘要标记更新)
       }
     }
 
-    // ---------- ch07:会话侧栏(列表 / 切换 / 历史回载) ----------
+    // ---------- context:会话侧栏(列表 / 切换 / 历史回载) ----------
     const convListEl = document.getElementById("conv-list");
 
     async function loadConversations() {
@@ -1295,7 +1291,7 @@
 
     getUserId();
     renderEmptyState();
-    loadConversations();              // ch07:进页面先拉会话列表
+    loadConversations();              // context:进页面先拉会话列表
     inputEl.focus();
   </script>
 </body>

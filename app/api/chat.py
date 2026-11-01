@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 import json
 import logging
 from collections.abc import AsyncIterator
@@ -18,6 +14,8 @@ router = APIRouter()
 
 
 def _sse(payload: dict) -> str:
+    """格式化 SSE 事件"""
+
     return f"data: {json.dumps(payload, ensure_ascii=False)}\n\n"
 
 
@@ -38,7 +36,7 @@ async def chat(req: ChatRequest):
                 elif ev["type"] == "citations":
                     yield _sse({"event": "citations", "items": ev["items"]})
                 elif ev["type"] == "interrupt":
-                    # ch08:负载透传(select_order 带 orders / confirm_ticket 带 preview),前端按 kind 分发
+                    # 工具执行模块:负载透传(select_order 带 orders / confirm_ticket 带 preview),前端按 kind 分发
                     yield _sse({"event": "interrupt",
                                 **{k: v for k, v in ev.items() if k != "type"}})
                 elif ev["type"] == "actions":

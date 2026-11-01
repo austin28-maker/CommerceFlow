@@ -1,11 +1,7 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """作业 API:后台管理页上那些「重跑」按钮的唯一入口。发起 / 查状态与日志尾 / 停止。
 
 白名单在 app/core/jobs.py,argv 写死在那边。这里只负责把作业名换成一次运行——
-名字不在注册表里就 404,连命令都拼不出来。知识库建库(ch03)与分类器验收(ch10)共用这一套。
+名字不在注册表里就 404,连命令都拼不出来。知识库建库(知识库模块)与分类器验收(分类器模块)共用这一套。
 """
 from fastapi import APIRouter, HTTPException
 

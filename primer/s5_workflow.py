@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """第五个例子：同一个问题换成 Workflow，先查什么后查什么由代码写死，模型只负责把结果说成人话。"""
 
 import json

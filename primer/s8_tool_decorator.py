@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """@tool 装饰器：把普通函数亮给模型。对照 s3_tools.py 里手写的 JSON Schema。"""
 
 import json

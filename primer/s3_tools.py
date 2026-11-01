@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """第三个例子：给它一份工具清单，它只会说要调哪个，真去查的是你的代码。"""
 
 import json

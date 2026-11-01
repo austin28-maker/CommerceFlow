@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """知识库录入 API:把建库这条链搬上页面——材料清单、切块预览、录入入库、向量化、检索自测。
 
 两条录入路径,边界分清:
@@ -252,7 +248,7 @@ async def vectorize() -> dict:
 
 class SearchIn(BaseModel):
     q: str
-    strategy: str = "vector"        # 本章只跑 dense 单路;bm25/hybrid 是 ch04 的事
+    strategy: str = "vector"        # 本阶段只跑 dense 单路;bm25/hybrid 是 检索评测模块 的事
     top_k: int = Field(default=5, ge=1, le=20)
 
 

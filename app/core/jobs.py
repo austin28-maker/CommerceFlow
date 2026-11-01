@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """后台管理页作业运行器:把 make 目标搬到浏览器上按,日志轮询回显,长活能停。
 
 安全边界:只能跑 JOBS 注册表里的目标,argv 全部写死在本模块。前端只传一个 job 名,
@@ -35,7 +31,7 @@ class JobSpec:
 
 JOBS: dict[str, JobSpec] = {
     j.name: j for j in (
-        # ch03 知识库:离线建库那四步
+        # 知识库模块 知识库:离线建库那四步
         JobSpec("kb-preview", "材料清单与切块预览", ("make", "kb-preview"), "本地跑,不写库"),
         JobSpec("kb-build", "离线建库(文档切块 → pending)", ("make", "kb-build"), "需 mysql"),
         JobSpec("kb-mine", "对话挖知识(抽 QA → 去重 → pending)", ("make", "kb-mine"),
@@ -49,28 +45,28 @@ JOBS: dict[str, JobSpec] = {
         JobSpec("seed-conv", "灌历史会话种子", ("make", "seed-conv"), "需 docker mysql 容器"),
         JobSpec("kb-reset", "清库重建(清两表 + drop 集合)", ("make", "kb-reset"),
                 "需 mysql + Milvus;会清空知识库", heavy=True),
-        # ch04 检索质量:四策略对照评估(检索段确定性 + 生成段过 LLM 裁判)
+        # 检索评测模块 检索质量:四策略对照评估(检索段确定性 + 生成段过 LLM 裁判)
         JobSpec("eval-rag", "RAG 评估(四策略对照)", ("make", "eval-rag"),
                 "需 Milvus + 已建库 + 聊天上游,分钟级", heavy=True),
-        # ch09 观测与成本:意图成本账、评估趋势、置信度阈值校准
+        # 可观测模块 观测与成本:意图成本账、评估趋势、置信度阈值校准
         JobSpec("cost-report", "意图成本账", ("make", "cost-report"),
                 "需 Langfuse 在跑且窗口内有 trace"),
         JobSpec("eval-flywheel", "评估流水线(落一轮趋势)", ("make", "eval-flywheel"),
                 "需 mysql + Milvus + 聊天上游,分钟级", heavy=True),
         JobSpec("calibrate-confidence", "置信度阈值校准", ("make", "calibrate-confidence"),
                 "需 Milvus + 已建库 + 重排上游,分钟级", heavy=True),
-        # ch10 分类器
-        JobSpec("ch10-golden", "黄金样例闸", ("make", "ch10-golden"), "需聊天上游"),
-        JobSpec("ch10-corpus", "语料流水线", ("make", "ch10-corpus"),
+        # 分类器模块 分类器
+        JobSpec("classifier-golden", "黄金样例闸", ("make", "classifier-golden"), "需聊天上游"),
+        JobSpec("classifier-corpus", "语料流水线", ("make", "classifier-corpus"),
                 "需 mysql + 聊天上游", heavy=True),
-        JobSpec("ch10-dataset", "数据集划分与增强", ("make", "ch10-dataset"),
+        JobSpec("classifier-dataset", "数据集划分与增强", ("make", "classifier-dataset"),
                 "需聊天上游", heavy=True),
-        JobSpec("ch10-train", "全参微调训练", ("make", "ch10-train"),
+        JobSpec("classifier-train", "全参微调训练", ("make", "classifier-train"),
                 "需 ml 依赖,分钟级", heavy=True),
-        JobSpec("ch10-eval", "测试集评测", ("make", "ch10-eval"), "需 ml 依赖 + 已训练权重"),
-        JobSpec("ch10-export", "ONNX 导出与一致性校验", ("make", "ch10-export"),
+        JobSpec("classifier-eval", "测试集评测", ("make", "classifier-eval"), "需 ml 依赖 + 已训练权重"),
+        JobSpec("classifier-export", "ONNX 导出与一致性校验", ("make", "classifier-export"),
                 "需 ml 依赖 + 已训练权重", heavy=True),
-        JobSpec("ch10-threshold-scan", "阈值扫描重演", ("make", "ch10-threshold-scan"),
+        JobSpec("classifier-threshold-scan", "阈值扫描重演", ("make", "classifier-threshold-scan"),
                 "需分类器服务 :8110"),
         JobSpec("classifier-up", "拉起分类器服务", ("make", "classifier-up"), "需已导出 ONNX"),
         JobSpec("classifier-down", "停止分类器服务", ("make", "classifier-down"), "—"),

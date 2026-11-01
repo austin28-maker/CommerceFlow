@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """上下文信息保留率对照实验 v3。
 
 30 轮客服对话，9 次工具调用，总 ~8000 token。

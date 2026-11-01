@@ -1,7 +1,3 @@
-# 来源：公众号@小林coding
-# 后端八股网站：xiaolincoding.com
-# Agent网站：xiaolinnote.com
-# 简历模版：jianli.xiaolinnote.com
 """后台首页聚合 API:知识库、RAG 评估、飞轮待审、观测与成本、主题分布、分类器验收各给一张卡。
 
 各块依赖不同(mysql / Milvus / 嵌入与聊天上游 / :8110 分类器)。任何一块的依赖没起,
@@ -23,7 +19,7 @@ RAG_LABEL = {"vector": "纯向量", "bm25": "纯 BM25", "hybrid": "混合",
 
 
 def _card(key: str, title: str, page: str, lede: str) -> dict:
-    """页面上不标章节号:后台是一个系统的几块功能,读者看的是「哪块要干活」,不是它出自第几章。"""
+    """后台页面使用功能名称，便于使用者定位操作入口。"""
     return {"key": key, "title": title, "page": page, "lede": lede,
             "status": "error", "headline": "读数失败", "metrics": [], "note": None}
 
